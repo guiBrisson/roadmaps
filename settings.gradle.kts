@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "roadmaps"
 include(":app")
+include(":core:model")
