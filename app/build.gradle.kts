@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.github.guibrisson.roadmaps"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.github.guibrisson.roadmaps"
@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":core:data"))
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
