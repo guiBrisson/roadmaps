@@ -54,12 +54,15 @@ android {
 
 dependencies {
     implementation(project(":core:data"))
+    implementation(project(":core:model"))
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
+    implementation(libs.lifecycle.runtime.compose)
     implementation(libs.activity.compose)
     implementation(libs.navigation.compose)
 
+    // Composer BOM
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
     implementation(libs.ui.graphics)
@@ -68,6 +71,7 @@ dependencies {
 
     // DI
     implementation(libs.dagger.hilt)
+    implementation(libs.dagger.hilt.navigation.compose)
     ksp(libs.dagger.hilt.compiler)
 
     // Test

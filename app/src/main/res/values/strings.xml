@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">roadmaps</string>
+    
+    <string name="all_roadmaps">All roadmaps</string>
+    <string name="loading">Loading…</string>
+    <string name="error_signal">Error: </string>
 </resources>
