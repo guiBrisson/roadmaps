@@ -3,10 +3,13 @@ package com.github.guibrisson.roadmaps.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.github.guibrisson.roadmaps.ui.screen.home.HomeRouter
+import androidx.navigation.navArgument
+import com.github.guibrisson.roadmaps.ui.screen.home.HomeRoute
+import com.github.guibrisson.roadmaps.ui.screen.roadmap.RoadmapRoute
 
 @Composable
 fun AppNavHost(
@@ -20,11 +23,34 @@ fun AppNavHost(
         startDestination = startDestination
     ) {
         composable(NavigationRoutes.HOME_ROUTE) {
-            HomeRouter()
+            HomeRoute(
+                onRoadmap = { roadmapId ->
+                    navController.navigate("${NavigationRoutes.ROADMAP_SCREEN}/$roadmapId")
+                },
+            )
+        }
+
+        composable(
+            route = NavigationRoutes.ROADMAP_ROUTE,
+            arguments = listOf(
+                navArgument(NavigationRoutes.ROADMAP_ID_ARG) { type = NavType.StringType },
+            )
+        ) {
+            RoadmapRoute(
+                onBack = { navController.navigateUp() },
+            )
         }
     }
 }
 
 object NavigationRoutes {
+    // Args
+    const val ROADMAP_ID_ARG = "roadmapId"
+
+    //Screen
+    const val ROADMAP_SCREEN = "roadmap"
+
+    // Routes
     const val HOME_ROUTE = "home"
+    const val ROADMAP_ROUTE = "$ROADMAP_SCREEN/{$ROADMAP_ID_ARG}"
 }

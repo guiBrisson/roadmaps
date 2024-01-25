@@ -84,7 +84,7 @@ class RoadmapService(private val context: Context) {
 
         for (line in bf.lines()) {
             when {
-                line.contains("title") && name.isEmpty() -> {
+                line.contains("briefTitle") && name.isEmpty() -> {
                     name = parseMdLine(line).orEmpty()
                 }
 
