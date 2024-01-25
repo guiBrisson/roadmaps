@@ -2,6 +2,7 @@ package com.github.guibrisson.roadmaps.ui.screen.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,17 +15,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.guibrisson.roadmaps.R
+import com.github.guibrisson.roadmaps.ui.components.alignLastItemToBottom
+import com.github.guibrisson.roadmaps.ui.components.loading
+import com.github.guibrisson.roadmaps.ui.components.failure
 import com.github.guibrisson.roadmaps.ui.screen.home.components.RoadmapItem
 import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
 
@@ -54,25 +56,7 @@ internal fun HomeScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp),
-        verticalArrangement = remember {
-            object : Arrangement.Vertical {
-                override fun Density.arrange(
-                    totalSize: Int,
-                    sizes: IntArray,
-                    outPositions: IntArray
-                ) {
-                    var currentOffset = 0
-                    sizes.forEachIndexed { index, size ->
-                        if (index == sizes.lastIndex) {
-                            outPositions[index] = totalSize - size
-                        } else {
-                            outPositions[index] = currentOffset
-                            currentOffset += size
-                        }
-                    }
-                }
-            }
-        }
+        verticalArrangement = alignLastItemToBottom()
     ) {
         item {
             Row(
@@ -94,8 +78,8 @@ internal fun HomeScreen(
 
         when (uiState) {
             is RoadmapsUiState.Success -> roadmapsSuccess(uiState, onRoadmap)
-            RoadmapsUiState.Loading -> loadingRoadmaps()
-            is RoadmapsUiState.Failure -> roadmapsFailure(uiState)
+            RoadmapsUiState.Loading -> loading()
+            is RoadmapsUiState.Failure -> failure(errorMessage = uiState.errorMessage)
         }
     }
 }
@@ -119,29 +103,8 @@ private fun LazyListScope.roadmapsSuccess(
             onRoadmap = onRoadmap,
         )
     }
-}
 
-
-private fun LazyListScope.loadingRoadmaps() {
-    item {
-        Text(
-            modifier = Modifier.padding(bottom = 40.dp),
-            text = stringResource(id = R.string.loading),
-        )
-    }
-}
-
-private fun LazyListScope.roadmapsFailure(uiState: RoadmapsUiState.Failure) {
-    item {
-        Row(modifier = Modifier.padding(bottom = 40.dp)) {
-            Text(
-                text = stringResource(id = R.string.error_signal),
-                color = MaterialTheme.colorScheme.error,
-            )
-
-            Text(text = uiState.errorMessage)
-        }
-    }
+    item { Spacer(modifier = Modifier.padding(1.dp)) }
 }
 
 @Preview

@@ -3,10 +3,12 @@ package com.github.guibrisson.roadmaps.ui.screen.roadmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
@@ -29,6 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.guibrisson.roadmaps.R
+import com.github.guibrisson.roadmaps.ui.components.alignLastItemToBottom
+import com.github.guibrisson.roadmaps.ui.components.failure
+import com.github.guibrisson.roadmaps.ui.components.loading
 import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
 
 @Composable
@@ -58,6 +63,7 @@ internal fun RoadmapScreen(
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
+        verticalArrangement = alignLastItemToBottom()
     ) {
         item {
             IconButton(
@@ -71,57 +77,66 @@ internal fun RoadmapScreen(
             }
         }
 
-        if (uiState.isSuccessful()) {
-            uiState as RoadmapDetailUiState.Success
-
-            item {
-                val name = "@${uiState.detail.name.lowercase()}"
-                Text(
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
-                    text = name,
-                    textDecoration = TextDecoration.Underline,
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            }
-
-            item {
-                Text(
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 36.dp),
-                    text = uiState.detail.description,
-                    textDecoration = TextDecoration.Underline,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
-                )
-            }
-
-            itemsIndexed(uiState.detail.topics.topics) { index, topic ->
-                val paddingValues = if (index == 0) {
-                    PaddingValues(bottom = 10.dp, start = 20.dp, end = 20.dp)
-                } else {
-                    PaddingValues(horizontal = 20.dp, vertical = 10.dp)
-                }
-
-                Row(
-                    modifier = Modifier.padding(paddingValues),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Text(
-                        modifier = Modifier.widthIn(min = 26.dp),
-                        text = "${index + 1}.",
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
-                        fontWeight = FontWeight.Medium,
-                        textAlign = TextAlign.End,
-                    )
-
-                    Text(
-                        text = topic.name.lowercase(),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            }
+        when (uiState) {
+            is RoadmapDetailUiState.Success -> roadmapDetail(uiState)
+            RoadmapDetailUiState.Loading -> loading(modifier = Modifier.padding(horizontal = 20.dp))
+            is RoadmapDetailUiState.Failure -> failure(
+                modifier = Modifier.padding(horizontal = 20.dp),
+                errorMessage = uiState.message,
+            )
         }
 
     }
+}
+
+private fun LazyListScope.roadmapDetail(uiState: RoadmapDetailUiState.Success) {
+    item {
+        val name = "@${uiState.detail.name.lowercase()}"
+        Text(
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
+            text = name,
+            textDecoration = TextDecoration.Underline,
+            style = MaterialTheme.typography.titleMedium,
+        )
+    }
+
+    item {
+        Text(
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 36.dp),
+            text = uiState.detail.description,
+            textDecoration = TextDecoration.Underline,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+        )
+    }
+
+    itemsIndexed(uiState.detail.topics.topics) { index, topic ->
+        val paddingValues = if (index == 0) {
+            PaddingValues(bottom = 10.dp, start = 20.dp, end = 20.dp)
+        } else {
+            PaddingValues(horizontal = 20.dp, vertical = 10.dp)
+        }
+
+        Row(
+            modifier = Modifier.padding(paddingValues),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                modifier = Modifier.widthIn(min = 26.dp),
+                text = "${index + 1}.",
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.End,
+            )
+
+            Text(
+                text = topic.name.lowercase(),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+
+    item { Spacer(modifier = Modifier.padding(1.dp)) }
 }
 
 @Preview
@@ -129,7 +144,7 @@ internal fun RoadmapScreen(
 fun PreviewRoadmapScreen() {
     RoadmapsTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            val uiState = RoadmapDetailUiState.Loading
+            val uiState = RoadmapDetailUiState.Failure("An unexpected error occurred")
 
             RoadmapScreen(uiState = uiState, onBack = { })
         }

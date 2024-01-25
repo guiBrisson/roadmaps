@@ -30,8 +30,8 @@ class RoadmapViewModel @Inject constructor(
                     _uiState.update { RoadmapDetailUiState.Success(details) }
                     return@launch
                 }
-
-                _uiState.update { RoadmapDetailUiState.Failure("Roadmap details are null") }
+                val errorMessage = "No roadmap with id '$roadmapId'"
+                _uiState.update { RoadmapDetailUiState.Failure(errorMessage) }
             } catch (e: Exception) {
                 e.printStackTrace()
                 _uiState.update { RoadmapDetailUiState.Failure("An unexpected error occurred") }
