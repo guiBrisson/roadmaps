@@ -30,7 +30,7 @@ class RoadmapService(private val context: Context) {
             id = roadmap.id,
             name = roadmap.name,
             description = roadmap.description,
-            topics = topics,
+            content = topics,
         ).also { Log.d(TAG, "getRoadmapDetails: ${it.id}") }
     }
 
