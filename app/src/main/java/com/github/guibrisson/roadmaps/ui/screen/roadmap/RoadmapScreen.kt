@@ -46,7 +46,7 @@ fun RoadmapRoute(
     modifier: Modifier = Modifier,
     viewModel: RoadmapViewModel = hiltViewModel(),
     onBack: () -> Unit,
-    onFolder: (folderId: String) -> Unit,
+    onFolder: (Array<String>) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -67,7 +67,7 @@ internal fun RoadmapScreen(
     modifier: Modifier = Modifier,
     uiState: RoadmapDetailUiState,
     onBack: () -> Unit,
-    onFolder: (folderId: String) -> Unit,
+    onFolder: (Array<String>) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -103,7 +103,7 @@ internal fun RoadmapScreen(
 
 private fun LazyListScope.roadmapDetail(
     uiState: RoadmapDetailUiState.Success,
-    onFolder: (folderId: String) -> Unit,
+    onFolder: (Array<String>) -> Unit,
 ) {
     item {
         val name = "@${uiState.detail.name.lowercase()}"
@@ -140,10 +140,11 @@ private fun LazyListScope.roadmapDetail(
                     interactionSource = interactionSource,
                     indication = null,
                 ) {
+                    val navigationArgs: Array<String> = arrayOf(uiState.detail.id, topic.id)
+
                     when (topic) {
-                        is TopicFolder -> onFolder(topic.id)
-                        is TopicItem -> { /*TODO*/
-                        }
+                        is TopicFolder -> onFolder(navigationArgs)
+                        is TopicItem -> { /*TODO*/ }
                     }
                 },
             horizontalArrangement = Arrangement.spacedBy(4.dp),

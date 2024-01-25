@@ -1,5 +1,6 @@
 package com.github.guibrisson.roadmaps.ui.screen.roadmap_folder
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,12 +12,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.guibrisson.roadmaps.R
@@ -32,6 +38,11 @@ fun RoadmapFolderRoute(
     onBack: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchFolder()
+    }
+
     RoadmapFolderScreen(
         modifier = modifier,
         uiState = uiState,
@@ -50,16 +61,29 @@ internal fun RoadmapFolderScreen(
         verticalArrangement = alignLastItemToBottom(),
     ) {
         item {
-            LazyRow {
-                item {
-                    IconButton(
-                        modifier = Modifier.padding(start = 2.dp, bottom = 2.dp, top = 28.dp),
-                        onClick = onBack,
-                    ) {
-                        Icon(
-                            Icons.Rounded.KeyboardArrowLeft,
-                            contentDescription = stringResource(id = R.string.arrow_back_icon_content_description),
-                        )
+            Row(
+                modifier = Modifier.padding(start = 2.dp, bottom = 10.dp, top = 28.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+
+                IconButton(onClick = onBack) {
+                    Icon(
+                        Icons.Rounded.KeyboardArrowLeft,
+                        contentDescription = stringResource(id = R.string.arrow_back_icon_content_description),
+                    )
+                }
+
+                if (uiState.isSuccessful()) {
+                    uiState as FolderUiState.Success
+
+                    LazyRow(modifier = Modifier.padding(start = 2.dp)) {
+                        item {
+                            val name = "@${uiState.roadmapId.lowercase()}"
+                            Text(
+                                text = name,
+                                textDecoration = TextDecoration.Underline,
+                            )
+                        }
                     }
                 }
             }
@@ -67,7 +91,21 @@ internal fun RoadmapFolderScreen(
 
         when (uiState) {
             is FolderUiState.Success -> {
-                /*TODO*/
+                item {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        text = uiState.folder.name.lowercase(),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                }
+
+                item {
+                    Text(
+                        modifier = Modifier.padding(top = 12.dp, start = 20.dp, end = 20.dp),
+                        text = uiState.folder.content,
+                        style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 20.sp),
+                    )
+                }
 
                 item { Spacer(modifier = Modifier.padding(1.dp)) }
             }

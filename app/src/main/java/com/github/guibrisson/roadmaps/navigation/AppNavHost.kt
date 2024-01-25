@@ -39,8 +39,9 @@ fun AppNavHost(
         ) {
             RoadmapRoute(
                 onBack = { navController.navigateUp() },
-                onFolder = { folderId ->
-                    navController.navigate("${NavigationRoutes.ROADMAP_FOLDER_SCREEN}/$folderId")
+                onFolder = {
+                    val navArgs: String = it.joinToString()
+                    navController.navigate("${NavigationRoutes.ROADMAP_FOLDER_SCREEN}/$navArgs")
                 }
             )
         }
@@ -48,7 +49,7 @@ fun AppNavHost(
         composable(
             route = NavigationRoutes.ROADMAP_FOLDER_ROUTE,
             arguments = listOf(
-                navArgument(NavigationRoutes.ROADMAP_FOLDER_ID_ARG) { type = NavType.StringType },
+                navArgument(NavigationRoutes.ROADMAP_FOLDER_ARGS) { type = NavType.StringType },
             ),
         ) {
             RoadmapFolderRoute(
@@ -61,7 +62,7 @@ fun AppNavHost(
 object NavigationRoutes {
     // Args
     const val ROADMAP_ID_ARG = "roadmapId"
-    const val ROADMAP_FOLDER_ID_ARG = "roadmapFolderId"
+    const val ROADMAP_FOLDER_ARGS = "roadmapFolderArgs"
 
     //Screen
     const val ROADMAP_SCREEN = "roadmap"
@@ -70,5 +71,5 @@ object NavigationRoutes {
     // Routes
     const val HOME_ROUTE = "home"
     const val ROADMAP_ROUTE = "$ROADMAP_SCREEN/{$ROADMAP_ID_ARG}"
-    const val ROADMAP_FOLDER_ROUTE = "$ROADMAP_FOLDER_SCREEN/{$ROADMAP_FOLDER_ID_ARG}"
+    const val ROADMAP_FOLDER_ROUTE = "$ROADMAP_FOLDER_SCREEN/{$ROADMAP_FOLDER_ARGS}"
 }
