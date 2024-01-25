@@ -29,9 +29,10 @@ import com.github.guibrisson.roadmaps.ui.screen.home.components.RoadmapItem
 import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
 
 @Composable
-fun HomeRouter(
+fun HomeRoute(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel()
+    viewModel: HomeViewModel = hiltViewModel(),
+    onRoadmap: (roadmapId: String) -> Unit,
 ) {
     val uiState by viewModel.roadmapUiState.collectAsStateWithLifecycle()
 
@@ -39,7 +40,7 @@ fun HomeRouter(
         viewModel.fetchAllRoadmaps()
     }
 
-    HomeScreen(modifier = modifier, uiState = uiState)
+    HomeScreen(modifier = modifier, uiState = uiState, onRoadmap = onRoadmap)
 }
 
 
@@ -47,6 +48,7 @@ fun HomeRouter(
 internal fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: RoadmapsUiState,
+    onRoadmap: (roadmapId: String) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier
@@ -91,14 +93,17 @@ internal fun HomeScreen(
         }
 
         when (uiState) {
-            is RoadmapsUiState.Success -> roadmapsSuccess(uiState)
+            is RoadmapsUiState.Success -> roadmapsSuccess(uiState, onRoadmap)
             RoadmapsUiState.Loading -> loadingRoadmaps()
             is RoadmapsUiState.Failure -> roadmapsFailure(uiState)
         }
     }
 }
 
-private fun LazyListScope.roadmapsSuccess(uiState: RoadmapsUiState.Success) {
+private fun LazyListScope.roadmapsSuccess(
+    uiState: RoadmapsUiState.Success,
+    onRoadmap: (roadmapId: String) -> Unit,
+) {
     item {
         Text(
             modifier = Modifier.padding(bottom = 14.dp),
@@ -108,7 +113,11 @@ private fun LazyListScope.roadmapsSuccess(uiState: RoadmapsUiState.Success) {
     }
 
     items(uiState.roadmaps) { roadmap ->
-        RoadmapItem(modifier = Modifier.padding(vertical = 6.dp), roadmap = roadmap)
+        RoadmapItem(
+            modifier = Modifier.padding(vertical = 6.dp),
+            roadmap = roadmap,
+            onRoadmap = onRoadmap,
+        )
     }
 }
 
@@ -141,7 +150,7 @@ fun PreviewHomeScreen() {
     RoadmapsTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             val uiState = RoadmapsUiState.Loading
-            HomeScreen(uiState = uiState)
+            HomeScreen(uiState = uiState, onRoadmap = { })
         }
     }
 }

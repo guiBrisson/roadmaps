@@ -2,6 +2,7 @@ package com.github.guibrisson.roadmaps.ui.screen.home.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -22,7 +23,8 @@ import com.github.guibrisson.model.Roadmap
 fun RoadmapItem(
     modifier: Modifier = Modifier,
     roadmap: Roadmap,
-    shape: Shape = RoundedCornerShape(8.dp)
+    shape: Shape = RoundedCornerShape(8.dp),
+    onRoadmap: (roadmapId: String) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -35,6 +37,7 @@ fun RoadmapItem(
                 shape = shape,
             )
             .background(MaterialTheme.colorScheme.surface)
+            .clickable { onRoadmap(roadmap.id) }
             .padding(vertical = 12.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

@@ -7,4 +7,5 @@
 
     <!--  Content Descriptions  -->
     <string name="roadmap_icon_content_description">Roadmap icon</string>
+    <string name="arrow_back_icon_content_description">Arrow back icon</string>
 </resources>

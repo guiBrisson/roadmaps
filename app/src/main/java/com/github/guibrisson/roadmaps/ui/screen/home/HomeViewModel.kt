@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.guibrisson.data.repository.RoadmapRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +20,7 @@ class HomeViewModel @Inject constructor(
     val roadmapUiState: StateFlow<RoadmapsUiState> = _roadmapsUiState.asStateFlow()
 
     fun fetchAllRoadmaps() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val roadmaps = roadmapRepository.listAllRoadmaps()
                 _roadmapsUiState.update { RoadmapsUiState.Success(roadmaps) }
