@@ -42,7 +42,8 @@ fun AppNavHost(
         ) {
             RoadmapRoute(
                 onBack = { navController.navigateUp() },
-                onFolder = { navigateToFolder(navController, it) }
+                onFolder = { navigateToFolder(navController, it) },
+                onItem = { navigateToItem(navController, it) }
             )
         }
 
