@@ -7,6 +7,7 @@ androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
 lifecycle-runtime-ktx = "2.7.0"
 activity-compose = "1.8.2"
+compose-material = "1.6.0"
 compose-bom = "2023.10.01"
 org-jetbrains-kotlin-jvm = "1.8.10"
 androidx-hilt-navigation-compose = "1.1.0"
@@ -18,6 +19,7 @@ ksp = "1.9.0-1.0.11"
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+compose-material-extended-icons = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "compose-material" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle-runtime-ktx" }

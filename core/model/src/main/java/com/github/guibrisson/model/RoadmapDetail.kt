@@ -4,5 +4,5 @@ data class RoadmapDetail(
     val id: String,
     val name: String,
     val description: String,
-    val topics: TopicFolder,
+    val content: TopicFolder,
 )

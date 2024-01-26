@@ -1,15 +1,10 @@
 package com.github.guibrisson.roadmaps.ui.screen.roadmap
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
 import androidx.compose.material3.Icon
@@ -22,10 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,6 +26,7 @@ import com.github.guibrisson.roadmaps.R
 import com.github.guibrisson.roadmaps.ui.components.alignLastItemToBottom
 import com.github.guibrisson.roadmaps.ui.components.failure
 import com.github.guibrisson.roadmaps.ui.components.loading
+import com.github.guibrisson.roadmaps.ui.components.topicsComponent
 import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
 
 @Composable
@@ -41,6 +34,7 @@ fun RoadmapRoute(
     modifier: Modifier = Modifier,
     viewModel: RoadmapViewModel = hiltViewModel(),
     onBack: () -> Unit,
+    onFolder: (Array<String>) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -52,6 +46,7 @@ fun RoadmapRoute(
         modifier = modifier,
         uiState = uiState,
         onBack = onBack,
+        onFolder = onFolder,
     )
 }
 
@@ -60,6 +55,7 @@ internal fun RoadmapScreen(
     modifier: Modifier = Modifier,
     uiState: RoadmapDetailUiState,
     onBack: () -> Unit,
+    onFolder: (Array<String>) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -78,7 +74,11 @@ internal fun RoadmapScreen(
         }
 
         when (uiState) {
-            is RoadmapDetailUiState.Success -> roadmapDetail(uiState)
+            is RoadmapDetailUiState.Success -> roadmapDetailSuccess(
+                uiState = uiState,
+                onFolder = onFolder,
+            )
+
             RoadmapDetailUiState.Loading -> loading(modifier = Modifier.padding(horizontal = 20.dp))
             is RoadmapDetailUiState.Failure -> failure(
                 modifier = Modifier.padding(horizontal = 20.dp),
@@ -89,7 +89,10 @@ internal fun RoadmapScreen(
     }
 }
 
-private fun LazyListScope.roadmapDetail(uiState: RoadmapDetailUiState.Success) {
+private fun LazyListScope.roadmapDetailSuccess(
+    uiState: RoadmapDetailUiState.Success,
+    onFolder: (Array<String>) -> Unit,
+) {
     item {
         val name = "@${uiState.detail.name.lowercase()}"
         Text(
@@ -109,32 +112,12 @@ private fun LazyListScope.roadmapDetail(uiState: RoadmapDetailUiState.Success) {
         )
     }
 
-    itemsIndexed(uiState.detail.topics.topics) { index, topic ->
-        val paddingValues = if (index == 0) {
-            PaddingValues(bottom = 10.dp, start = 20.dp, end = 20.dp)
-        } else {
-            PaddingValues(horizontal = 20.dp, vertical = 10.dp)
-        }
-
-        Row(
-            modifier = Modifier.padding(paddingValues),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            Text(
-                modifier = Modifier.widthIn(min = 26.dp),
-                text = "${index + 1}.",
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.1f),
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.End,
-            )
-
-            Text(
-                text = topic.name.lowercase(),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
+    topicsComponent(
+        detailId = uiState.detail.id,
+        topics = uiState.detail.content.topics,
+        onFolder = onFolder,
+        onItem = { /*TODO*/ },
+    )
 
     item { Spacer(modifier = Modifier.padding(1.dp)) }
 }
@@ -146,7 +129,7 @@ fun PreviewRoadmapScreen() {
         Surface(color = MaterialTheme.colorScheme.background) {
             val uiState = RoadmapDetailUiState.Failure("An unexpected error occurred")
 
-            RoadmapScreen(uiState = uiState, onBack = { })
+            RoadmapScreen(uiState = uiState, onBack = { }, onFolder = { })
         }
     }
 }
