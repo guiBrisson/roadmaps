@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.guibrisson.data.repository.RoadmapRepository
 import com.github.guibrisson.roadmaps.navigation.NavigationUtils
-import com.github.guibrisson.roadmaps.ui.screen.roadmap_folder.FolderUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
