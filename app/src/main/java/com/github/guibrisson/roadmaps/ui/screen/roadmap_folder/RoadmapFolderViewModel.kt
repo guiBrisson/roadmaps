@@ -4,8 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.guibrisson.data.repository.RoadmapRepository
-import com.github.guibrisson.model.TopicFolder
-import com.github.guibrisson.roadmaps.navigation.NavigationRoutes
+import com.github.guibrisson.roadmaps.navigation.NavigationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,32 +20,23 @@ class RoadmapFolderViewModel @Inject constructor(
     private val roadmapRepository: RoadmapRepository,
 ) : ViewModel() {
     private val navArgs: String =
-        checkNotNull(savedStateHandle[NavigationRoutes.ROADMAP_FOLDER_ARGS])
+        checkNotNull(savedStateHandle[NavigationUtils.ROADMAP_FOLDER_ARGS])
     private val navArgsList: List<String> = navArgs.split(",")
     private val roadmapId: String = navArgsList.first()
+    private val folderId = navArgsList[1].trim()
 
     private val _uiState = MutableStateFlow<FolderUiState>(FolderUiState.Loading)
     val uiState: StateFlow<FolderUiState> = _uiState.asStateFlow()
 
     fun fetchFolder() {
         viewModelScope.launch(Dispatchers.IO) {
-            roadmapRepository.getRoadmapDetails(roadmapId)?.let { detail ->
-                val folders = detail.content.topics.filterIsInstance<TopicFolder>()
-                val topicId = navArgsList[1].trim()
-                folders.firstOrNull { it.id == topicId }?.let { folder ->
-                    _uiState.update {
-                        FolderUiState.Success(
-                            folder = folder,
-                            roadmapId = roadmapId,
-                        )
-                    }
-                    return@launch
-                }
-                _uiState.update { FolderUiState.Failure("Could not find topic '$topicId'") }
+            roadmapRepository.getRoadmapFolder(roadmapId, folderId)?.let { folder ->
+                _uiState.update { FolderUiState.Success(folder, roadmapId) }
                 return@launch
             }
 
-            _uiState.update { FolderUiState.Failure("No roadmap with id '$roadmapId'") }
+            val errorMessage = "Could not find topic '$folderId' from '$roadmapId'"
+            _uiState.update { FolderUiState.Failure(errorMessage) }
         }
     }
 }

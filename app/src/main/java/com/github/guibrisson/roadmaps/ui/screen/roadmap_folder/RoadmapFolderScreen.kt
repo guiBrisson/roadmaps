@@ -38,6 +38,8 @@ fun RoadmapFolderRoute(
     modifier: Modifier = Modifier,
     viewModel: RoadmapFolderViewModel = hiltViewModel(),
     onBack: () -> Unit,
+    onFolder: (Array<String>) -> Unit,
+    onItem: (Array<String>) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -49,6 +51,8 @@ fun RoadmapFolderRoute(
         modifier = modifier,
         uiState = uiState,
         onBack = onBack,
+        onFolder = onFolder,
+        onItem = onItem,
     )
 }
 
@@ -57,6 +61,8 @@ internal fun RoadmapFolderScreen(
     modifier: Modifier = Modifier,
     uiState: FolderUiState,
     onBack: () -> Unit,
+    onFolder: (Array<String>) -> Unit,
+    onItem: (Array<String>) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -94,8 +100,8 @@ internal fun RoadmapFolderScreen(
         when (uiState) {
             is FolderUiState.Success -> folderSuccess(
                 uiState = uiState,
-                onFolder = { /*TODO*/ },
-                onItem = { /*TODO*/ },
+                onFolder = onFolder,
+                onItem = onItem,
             )
 
             FolderUiState.Loading -> loading(modifier = Modifier.padding(horizontal = 20.dp))
@@ -158,7 +164,7 @@ private fun PreviewRoadmapFolderScreen() {
     RoadmapsTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             val uiState = FolderUiState.Loading
-            RoadmapFolderScreen(uiState = uiState, onBack = { })
+            RoadmapFolderScreen(uiState = uiState, onBack = { }, onFolder = { }, onItem = { })
         }
     }
 }
