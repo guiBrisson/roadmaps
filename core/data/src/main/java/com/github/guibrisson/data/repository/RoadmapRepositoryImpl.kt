@@ -5,6 +5,7 @@ import com.github.guibrisson.data.service.RoadmapService
 import com.github.guibrisson.model.Roadmap
 import com.github.guibrisson.model.RoadmapDetail
 import com.github.guibrisson.model.TopicFolder
+import com.github.guibrisson.model.TopicItem
 import com.github.guibrisson.model.TopicSystem
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -28,13 +29,33 @@ class RoadmapRepositoryImpl @Inject constructor(
         return folders.firstOrNull { it.id == folderId }
     }
 
-    private fun getAllFolders(items: List<TopicSystem>): List<TopicFolder> {
-        val folders = items.filterIsInstance<TopicFolder>()
+    override suspend fun getRoadmapItem(roadmapId: String, itemId: String): TopicItem? {
+        val detail = service.getRoadmapDetails(roadmapId) ?: return null
+        val items = getAllItems(detail.content.topics)
+        return items.firstOrNull { it.id == itemId }
+    }
+
+    private fun getAllFolders(topics: List<TopicSystem>): List<TopicFolder> {
+        val folders = topics.filterIsInstance<TopicFolder>()
         val folderMutableList: MutableList<TopicFolder> = folders.toMutableList()
 
         if (folders.isNotEmpty()) {
             folders.forEach { folder ->
                 folderMutableList.addAll(getAllFolders(folder.topics))
+            }
+        }
+
+        return folderMutableList
+    }
+
+    private fun getAllItems(topics: List<TopicSystem>): List<TopicItem> {
+        val items = topics.filterIsInstance<TopicItem>()
+        val folderMutableList: MutableList<TopicItem> = items.toMutableList()
+
+        for (item in topics) {
+            when(item) {
+                is TopicFolder -> folderMutableList.addAll(getAllItems(item.topics))
+                is TopicItem -> folderMutableList.add(item)
             }
         }
 

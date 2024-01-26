@@ -26,7 +26,7 @@ import com.github.guibrisson.roadmaps.R
 import com.github.guibrisson.roadmaps.ui.components.alignLastItemToBottom
 import com.github.guibrisson.roadmaps.ui.components.failure
 import com.github.guibrisson.roadmaps.ui.components.loading
-import com.github.guibrisson.roadmaps.ui.components.topicsComponent
+import com.github.guibrisson.roadmaps.ui.components.topics
 import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
 
 @Composable
@@ -112,7 +112,7 @@ private fun LazyListScope.roadmapDetailSuccess(
         )
     }
 
-    topicsComponent(
+    topics(
         detailId = uiState.detail.id,
         topics = uiState.detail.content.topics,
         onFolder = onFolder,
