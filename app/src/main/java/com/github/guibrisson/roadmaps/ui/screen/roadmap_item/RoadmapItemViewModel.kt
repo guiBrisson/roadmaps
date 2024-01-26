@@ -1,4 +1,4 @@
-package com.github.guibrisson.roadmaps.ui.screen.roadmap_folder
+package com.github.guibrisson.roadmaps.ui.screen.roadmap_item
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RoadmapFolderViewModel @Inject constructor(
+class RoadmapItemViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val roadmapRepository: RoadmapRepository,
 ) : ViewModel() {
@@ -23,20 +23,20 @@ class RoadmapFolderViewModel @Inject constructor(
         checkNotNull(savedStateHandle[NavigationUtils.ROADMAP_TOPIC_ARGS])
     private val navArgsList: List<String> = navArgs.split(",")
     private val roadmapId: String = navArgsList.first()
-    private val folderId = navArgsList[1].trim()
+    private val itemId = navArgsList[1].trim()
 
-    private val _uiState = MutableStateFlow<FolderUiState>(FolderUiState.Loading)
-    val uiState: StateFlow<FolderUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<ItemUiState>(ItemUiState.Loading)
+    val uiState: StateFlow<ItemUiState> = _uiState.asStateFlow()
 
-    fun fetchFolder() {
+    fun fetchItem() {
         viewModelScope.launch(Dispatchers.IO) {
-            roadmapRepository.getRoadmapFolder(roadmapId, folderId)?.let { folder ->
-                _uiState.update { FolderUiState.Success(folder, roadmapId) }
+            roadmapRepository.getRoadmapItem(roadmapId, itemId)?.let { item ->
+                _uiState.update { ItemUiState.Success(item, roadmapId) }
                 return@launch
             }
 
-            val errorMessage = "Could not find topic '$folderId' from '$roadmapId'"
-            _uiState.update { FolderUiState.Failure(errorMessage) }
+            val errorMessage = "Could not find topic '$itemId' from '$roadmapId'"
+            _uiState.update { ItemUiState.Failure(errorMessage) }
         }
     }
 }

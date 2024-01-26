@@ -26,13 +26,35 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.github.guibrisson.model.TopicFolder
 import com.github.guibrisson.model.TopicItem
 import com.github.guibrisson.model.TopicSystem
 import com.github.guibrisson.roadmaps.R
 import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
 
-fun LazyListScope.topicsComponent(
+fun LazyListScope.topicContent(topic: TopicSystem) {
+    item {
+        Text(
+            modifier = Modifier.padding(horizontal = 20.dp),
+            text = topic.name.lowercase(),
+            style = MaterialTheme.typography.titleSmall,
+        )
+    }
+
+    //todo: support for markdown
+    item {
+        if (topic.content.isNotEmpty()) {
+            Text(
+                modifier = Modifier.padding(top = 12.dp, start = 20.dp, end = 20.dp),
+                text = topic.content,
+                style = MaterialTheme.typography.bodyMedium.copy(lineHeight = 20.sp),
+            )
+        }
+    }
+}
+
+fun LazyListScope.topics(
     detailId: String,
     topics: List<TopicSystem>,
     onFolder: (Array<String>) -> Unit,
@@ -104,7 +126,21 @@ fun LazyListScope.topicsComponent(
 
 @Preview
 @Composable
-fun PreviewTopicsComponent() {
+fun PreviewTopicContent() {
+    RoadmapsTheme {
+        Surface(color = MaterialTheme.colorScheme.background) {
+            val topic = TopicItem(id = "1", name = "topic", content = "# topic\n**epic** topic")
+            LazyColumn {
+                topicContent(topic)
+            }
+        }
+    }
+}
+
+
+@Preview
+@Composable
+fun PreviewTopics() {
     RoadmapsTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             val topics = listOf(
@@ -122,7 +158,7 @@ fun PreviewTopicsComponent() {
             )
 
             LazyColumn {
-                topicsComponent(
+                topics(
                     detailId = "preview",
                     topics = topics,
                     onFolder = { },

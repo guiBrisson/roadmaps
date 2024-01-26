@@ -26,7 +26,7 @@ import com.github.guibrisson.roadmaps.R
 import com.github.guibrisson.roadmaps.ui.components.alignLastItemToBottom
 import com.github.guibrisson.roadmaps.ui.components.failure
 import com.github.guibrisson.roadmaps.ui.components.loading
-import com.github.guibrisson.roadmaps.ui.components.topicsComponent
+import com.github.guibrisson.roadmaps.ui.components.topics
 import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
 
 @Composable
@@ -35,6 +35,7 @@ fun RoadmapRoute(
     viewModel: RoadmapViewModel = hiltViewModel(),
     onBack: () -> Unit,
     onFolder: (Array<String>) -> Unit,
+    onItem: (Array<String>) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -47,6 +48,7 @@ fun RoadmapRoute(
         uiState = uiState,
         onBack = onBack,
         onFolder = onFolder,
+        onItem =  onItem,
     )
 }
 
@@ -56,6 +58,7 @@ internal fun RoadmapScreen(
     uiState: RoadmapDetailUiState,
     onBack: () -> Unit,
     onFolder: (Array<String>) -> Unit,
+    onItem: (Array<String>) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -77,6 +80,7 @@ internal fun RoadmapScreen(
             is RoadmapDetailUiState.Success -> roadmapDetailSuccess(
                 uiState = uiState,
                 onFolder = onFolder,
+                onItem = onItem,
             )
 
             RoadmapDetailUiState.Loading -> loading(modifier = Modifier.padding(horizontal = 20.dp))
@@ -92,6 +96,7 @@ internal fun RoadmapScreen(
 private fun LazyListScope.roadmapDetailSuccess(
     uiState: RoadmapDetailUiState.Success,
     onFolder: (Array<String>) -> Unit,
+    onItem: (Array<String>) -> Unit,
 ) {
     item {
         val name = "@${uiState.detail.name.lowercase()}"
@@ -112,11 +117,11 @@ private fun LazyListScope.roadmapDetailSuccess(
         )
     }
 
-    topicsComponent(
+    topics(
         detailId = uiState.detail.id,
         topics = uiState.detail.content.topics,
         onFolder = onFolder,
-        onItem = { /*TODO*/ },
+        onItem = onItem,
     )
 
     item { Spacer(modifier = Modifier.padding(1.dp)) }
@@ -129,7 +134,7 @@ fun PreviewRoadmapScreen() {
         Surface(color = MaterialTheme.colorScheme.background) {
             val uiState = RoadmapDetailUiState.Failure("An unexpected error occurred")
 
-            RoadmapScreen(uiState = uiState, onBack = { }, onFolder = { })
+            RoadmapScreen(uiState = uiState, onBack = { }, onFolder = { }, onItem = { })
         }
     }
 }

@@ -1,11 +1,10 @@
-package com.github.guibrisson.roadmaps.ui.screen.roadmap_folder
+package com.github.guibrisson.roadmaps.ui.screen.roadmap_item
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowLeft
@@ -30,39 +29,28 @@ import com.github.guibrisson.roadmaps.ui.components.alignLastItemToBottom
 import com.github.guibrisson.roadmaps.ui.components.failure
 import com.github.guibrisson.roadmaps.ui.components.loading
 import com.github.guibrisson.roadmaps.ui.components.topicContent
-import com.github.guibrisson.roadmaps.ui.components.topics
 import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
 
 @Composable
-fun RoadmapFolderRoute(
+fun RoadmapItemRoute(
     modifier: Modifier = Modifier,
-    viewModel: RoadmapFolderViewModel = hiltViewModel(),
+    viewModel: RoadmapItemViewModel = hiltViewModel(),
     onBack: () -> Unit,
-    onFolder: (Array<String>) -> Unit,
-    onItem: (Array<String>) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchFolder()
+        viewModel.fetchItem()
     }
 
-    RoadmapFolderScreen(
-        modifier = modifier,
-        uiState = uiState,
-        onBack = onBack,
-        onFolder = onFolder,
-        onItem = onItem,
-    )
+    RoadmapItemScreen(modifier = modifier, uiState = uiState, onBack = onBack)
 }
 
 @Composable
-internal fun RoadmapFolderScreen(
+internal fun RoadmapItemScreen(
     modifier: Modifier = Modifier,
-    uiState: FolderUiState,
+    uiState: ItemUiState,
     onBack: () -> Unit,
-    onFolder: (Array<String>) -> Unit,
-    onItem: (Array<String>) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -73,7 +61,6 @@ internal fun RoadmapFolderScreen(
                 modifier = Modifier.padding(start = 2.dp, bottom = 10.dp, top = 28.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-
                 IconButton(onClick = onBack) {
                     Icon(
                         Icons.Rounded.KeyboardArrowLeft,
@@ -82,7 +69,7 @@ internal fun RoadmapFolderScreen(
                 }
 
                 if (uiState.isSuccessful()) {
-                    uiState as FolderUiState.Success
+                    uiState as ItemUiState.Success
 
                     LazyRow(modifier = Modifier.padding(start = 2.dp)) {
                         item {
@@ -98,14 +85,14 @@ internal fun RoadmapFolderScreen(
         }
 
         when (uiState) {
-            is FolderUiState.Success -> folderSuccess(
-                uiState = uiState,
-                onFolder = onFolder,
-                onItem = onItem,
-            )
+            is ItemUiState.Success -> {
+                topicContent(uiState.item)
 
-            FolderUiState.Loading -> loading(modifier = Modifier.padding(horizontal = 20.dp))
-            is FolderUiState.Failure -> failure(
+                item { Spacer(modifier = Modifier.padding(1.dp)) }
+            }
+
+            ItemUiState.Loading -> loading(modifier = Modifier.padding(horizontal = 20.dp))
+            is ItemUiState.Failure -> failure(
                 modifier = Modifier.padding(horizontal = 20.dp),
                 errorMessage = uiState.errorMessage,
             )
@@ -113,42 +100,13 @@ internal fun RoadmapFolderScreen(
     }
 }
 
-private fun LazyListScope.folderSuccess(
-    uiState: FolderUiState.Success,
-    onFolder: (Array<String>) -> Unit,
-    onItem: (Array<String>) -> Unit,
-) {
-    topicContent(uiState.folder)
-
-    if (uiState.folder.topics.isNotEmpty()) {
-        item {
-            Text(
-                modifier = Modifier
-                    .padding(start = 20.dp, end = 20.dp, top = 40.dp, bottom = 20.dp),
-                text = stringResource(id = R.string.progress),
-                style = MaterialTheme.typography.bodyLarge,
-                textDecoration = TextDecoration.Underline,
-            )
-        }
-
-        topics(
-            detailId = uiState.roadmapId,
-            topics = uiState.folder.topics,
-            onFolder = onFolder,
-            onItem = onItem,
-        )
-    }
-
-    item { Spacer(modifier = Modifier.padding(1.dp)) }
-}
-
 @Preview
 @Composable
-private fun PreviewRoadmapFolderScreen() {
+private fun PreviewRoadmapItemScreen() {
     RoadmapsTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            val uiState = FolderUiState.Loading
-            RoadmapFolderScreen(uiState = uiState, onBack = { }, onFolder = { }, onItem = { })
+            val uiState = ItemUiState.Loading
+            RoadmapItemScreen(uiState = uiState, onBack = { })
         }
     }
 }
