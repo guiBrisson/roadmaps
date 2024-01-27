@@ -23,6 +23,7 @@ class ProgressTrackerManager(private val context: Context) {
     fun emptyFileList() = file.writeText(listOf<Nothing>().toString())
 
     fun writeOnFile(tracker: RoadmapTracker) {
+        Log.d(TAG, "writing on $FILE_NAME")
         val trackerList = readFile().toMutableList()
 
         var found = false
@@ -44,7 +45,7 @@ class ProgressTrackerManager(private val context: Context) {
     }
 
     fun readFile(): List<RoadmapTracker> {
-        Log.d(TAG, "reading file $FILE_NAME")
+        Log.d(TAG, "reading $FILE_NAME")
         var fileAsText = ""
 
         context.openFileInput(FILE_NAME).bufferedReader().useLines { lines ->
@@ -56,33 +57,27 @@ class ProgressTrackerManager(private val context: Context) {
 
     private fun createFile() {
         if (!file.exists()) {
-            checkAvailableBytes()?.let {
-                TODO("do something with this intent")
-//                return
-            }
+            checkAvailableBytes()
             file.createNewFile()
             emptyFileList()
         }
     }
 
-    /**
-     * @return [Intent] if the there isn't available bytes.
-     */
-    private fun checkAvailableBytes(): Intent? {
+    private fun checkAvailableBytes() {
         val storageManager = context.getSystemService<StorageManager>()!!
         val appInternalDirUuid: UUID = storageManager.getUuidForPath(fileDir)
         val availableBytes: Long = storageManager.getAllocatableBytes(appInternalDirUuid)
 
-        return if (availableBytes >= NUM_BYTES_NEED_FOR_ROADMAP_TRACKER) {
+        if (availableBytes >= NUM_BYTES_NEED_FOR_ROADMAP_TRACKER) {
             storageManager.allocateBytes(
                 appInternalDirUuid,
                 NUM_BYTES_NEED_FOR_ROADMAP_TRACKER
             )
-            null
         } else {
-            Intent().apply {
+            val intent = Intent().apply {
                 action = ACTION_MANAGE_STORAGE
             }
+            //TODO: do something with this intent
         }
     }
 
