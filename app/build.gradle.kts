@@ -62,6 +62,10 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.navigation.compose)
 
+    // Markdown
+    implementation(libs.richtext.ui.material)
+    implementation(libs.richtext.commonmark)
+
     // Composer BOM
     implementation(platform(libs.compose.bom))
     implementation(libs.ui)
