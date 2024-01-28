@@ -17,3 +17,4 @@ rootProject.name = "roadmaps"
 include(":app")
 include(":core:model")
 include(":core:data")
+include(":feature:progress_tracker")

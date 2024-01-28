@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.github.guibrisson.roadmaps"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -55,6 +55,7 @@ android {
 dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:model"))
+    implementation(project(":feature:progress_tracker"))
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
