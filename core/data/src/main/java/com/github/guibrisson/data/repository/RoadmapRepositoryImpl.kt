@@ -15,7 +15,7 @@ class RoadmapRepositoryImpl @Inject constructor(
 ) : RoadmapRepository {
     private val service = RoadmapService(context)
 
-    override suspend fun listAllRoadmaps(): List<Roadmap> {
+    override fun listAllRoadmaps(): List<Roadmap> {
         return service.getAllRoadmaps()
     }
 

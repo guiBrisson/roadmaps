@@ -1,18 +1,22 @@
 package com.github.guibrisson.progress_tracker.di
 
+import android.content.Context
+import com.github.guibrisson.data.repository.RoadmapRepository
 import com.github.guibrisson.progress_tracker.repository.TrackerRepository
 import com.github.guibrisson.progress_tracker.repository.TrackerRepositoryImpl
-import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-interface ProgressTrackerModule {
+object ProgressTrackerModule {
 
-    @Binds
-    fun bindsTrackerRepository(
-        trackerRepositoryImpl: TrackerRepositoryImpl
-    ): TrackerRepository
+    @Provides
+    fun providesTrackerRepository(
+        @ApplicationContext context: Context,
+        roadmapRepository: RoadmapRepository,
+    ): TrackerRepository = TrackerRepositoryImpl(context, roadmapRepository)
 }

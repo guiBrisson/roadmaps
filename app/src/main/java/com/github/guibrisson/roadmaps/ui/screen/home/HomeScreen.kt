@@ -13,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,8 +24,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.guibrisson.roadmaps.R
 import com.github.guibrisson.roadmaps.ui.components.alignLastItemToBottom
-import com.github.guibrisson.roadmaps.ui.components.loading
 import com.github.guibrisson.roadmaps.ui.components.failure
+import com.github.guibrisson.roadmaps.ui.components.loading
 import com.github.guibrisson.roadmaps.ui.screen.home.components.RoadmapItem
 import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
 
@@ -38,11 +37,12 @@ fun HomeRoute(
 ) {
     val uiState by viewModel.roadmapUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        viewModel.fetchAllRoadmaps()
-    }
-
-    HomeScreen(modifier = modifier, uiState = uiState, onRoadmap = onRoadmap)
+    HomeScreen(
+        modifier = modifier,
+        uiState = uiState,
+        onRoadmap = onRoadmap,
+        onFavorite = viewModel::favorite,
+    )
 }
 
 
@@ -51,6 +51,7 @@ internal fun HomeScreen(
     modifier: Modifier = Modifier,
     uiState: RoadmapsUiState,
     onRoadmap: (roadmapId: String) -> Unit,
+    onFavorite: (roadmapId: String) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier
@@ -77,7 +78,7 @@ internal fun HomeScreen(
         }
 
         when (uiState) {
-            is RoadmapsUiState.Success -> roadmapsSuccess(uiState, onRoadmap)
+            is RoadmapsUiState.Success -> roadmapsSuccess(uiState, onRoadmap, onFavorite)
             RoadmapsUiState.Loading -> loading()
             is RoadmapsUiState.Failure -> failure(errorMessage = uiState.errorMessage)
         }
@@ -87,6 +88,7 @@ internal fun HomeScreen(
 private fun LazyListScope.roadmapsSuccess(
     uiState: RoadmapsUiState.Success,
     onRoadmap: (roadmapId: String) -> Unit,
+    onFavorite: (roadmapId: String) -> Unit,
 ) {
     item {
         Text(
@@ -101,6 +103,7 @@ private fun LazyListScope.roadmapsSuccess(
             modifier = Modifier.padding(vertical = 6.dp),
             roadmap = roadmap,
             onRoadmap = onRoadmap,
+            onFavorite = onFavorite,
         )
     }
 
@@ -113,7 +116,7 @@ fun PreviewHomeScreen() {
     RoadmapsTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             val uiState = RoadmapsUiState.Loading
-            HomeScreen(uiState = uiState, onRoadmap = { })
+            HomeScreen(uiState = uiState, onRoadmap = { }, onFavorite = { })
         }
     }
 }
