@@ -148,7 +148,7 @@ fun LazyListScope.topics(
 
             Text(
                 modifier = Modifier.weight(1f, fill = false),
-                text = topic.name.lowercase().replace(" ", "_"),
+                text = topic.name.lowercase(),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.bodyMedium,

@@ -6,6 +6,7 @@ sealed interface RoadmapsUiState {
     data object Loading : RoadmapsUiState
 
     data class Success(
+        val savedRoadmaps: List<TrackedRoadmap>,
         val roadmaps: List<TrackedRoadmap>
     ) : RoadmapsUiState
 

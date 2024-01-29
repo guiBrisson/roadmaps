@@ -1,6 +1,7 @@
 package com.github.guibrisson.roadmaps.ui.screen.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -90,9 +91,43 @@ private fun LazyListScope.roadmapsSuccess(
     onRoadmap: (roadmapId: String) -> Unit,
     onFavorite: (roadmapId: String) -> Unit,
 ) {
+    if (uiState.savedRoadmaps.isNotEmpty()) {
+        item {
+            Text(
+                modifier = Modifier,
+                text = stringResource(id = R.string.saved_roadmaps),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+        }
+
+        item {
+            Text(
+                modifier = Modifier.padding(bottom = 14.dp),
+                text = stringResource(id = R.string.saved_roadmaps_subtitle),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+            )
+        }
+
+        items(uiState.savedRoadmaps) { roadmap ->
+            RoadmapItem(
+                modifier = Modifier.padding(vertical = 6.dp),
+                roadmap = roadmap,
+                onRoadmap = onRoadmap,
+                onFavorite = onFavorite,
+            )
+        }
+    }
+
     item {
+        val padding = if (uiState.savedRoadmaps.isNotEmpty()) {
+            PaddingValues(top = 40.dp, bottom = 14.dp)
+        } else {
+            PaddingValues(bottom = 14.dp)
+        }
+
         Text(
-            modifier = Modifier.padding(bottom = 14.dp),
+            modifier = Modifier.padding(padding),
             text = stringResource(id = R.string.all_roadmaps),
             style = MaterialTheme.typography.bodyLarge,
         )

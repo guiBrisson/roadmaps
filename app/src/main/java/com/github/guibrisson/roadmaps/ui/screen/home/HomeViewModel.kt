@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,23 +32,19 @@ class HomeViewModel @Inject constructor(
                 TrackedRoadmap(roadmap.id, roadmap.name, roadmap.description, isFavorite)
             }
         }
-        .onEach { trackedRoadmaps ->
-            _roadmapsUiState.update { RoadmapsUiState.Success(trackedRoadmaps) }
-        }
-        .catch {  t ->
-            _roadmapsUiState.update {
-                val errorMessage = t.message ?: "An unexpected error occurred"
-                RoadmapsUiState.Failure(errorMessage)
-            }
-        }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val _roadmapsUiState = MutableStateFlow<RoadmapsUiState>(RoadmapsUiState.Loading)
     val roadmapUiState: StateFlow<RoadmapsUiState> =
-        combine(trackedRoadmaps, _roadmapsUiState) { tracker, _ ->
-            RoadmapsUiState.Success(tracker)
-        }.catch {
-            RoadmapsUiState.Failure(it.message ?: "An unexpected error occurred")
+        combine(trackedRoadmaps, _roadmapsUiState) { tracker, state ->
+            val saved = tracker.filter { it.isFavorite }
+            val rest = tracker.filter { !it.isFavorite }
+            _roadmapsUiState.update { RoadmapsUiState.Success(saved, rest) }
+            state
+        }.catch { t ->
+            _roadmapsUiState.update {
+                RoadmapsUiState.Failure(t.message ?: "An unexpected error occurred")
+            }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), _roadmapsUiState.value)
 
 
