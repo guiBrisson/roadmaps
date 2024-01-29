@@ -1,7 +1,10 @@
 package com.github.guibrisson.roadmaps.ui.screen.roadmap
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
@@ -15,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -23,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.guibrisson.roadmaps.R
+import com.github.guibrisson.roadmaps.ui.components.Favorite
 import com.github.guibrisson.roadmaps.ui.components.alignLastItemToBottom
 import com.github.guibrisson.roadmaps.ui.components.failure
 import com.github.guibrisson.roadmaps.ui.components.loading
@@ -47,8 +52,9 @@ fun RoadmapRoute(
         modifier = modifier,
         uiState = uiState,
         onBack = onBack,
+        onFavorite = viewModel::favorite,
         onFolder = onFolder,
-        onItem =  onItem,
+        onItem = onItem,
     )
 }
 
@@ -57,6 +63,7 @@ internal fun RoadmapScreen(
     modifier: Modifier = Modifier,
     uiState: RoadmapDetailUiState,
     onBack: () -> Unit,
+    onFavorite: (roadmapId: String) -> Unit,
     onFolder: (Array<String>) -> Unit,
     onItem: (Array<String>) -> Unit,
 ) {
@@ -79,6 +86,7 @@ internal fun RoadmapScreen(
         when (uiState) {
             is RoadmapDetailUiState.Success -> roadmapDetailSuccess(
                 uiState = uiState,
+                onFavorite = onFavorite,
                 onFolder = onFolder,
                 onItem = onItem,
             )
@@ -95,17 +103,29 @@ internal fun RoadmapScreen(
 
 private fun LazyListScope.roadmapDetailSuccess(
     uiState: RoadmapDetailUiState.Success,
+    onFavorite: (roadmapId: String) -> Unit,
     onFolder: (Array<String>) -> Unit,
     onItem: (Array<String>) -> Unit,
 ) {
     item {
-        val name = "@${uiState.detail.name.lowercase()}"
-        Text(
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
-            text = name,
-            textDecoration = TextDecoration.Underline,
-            style = MaterialTheme.typography.titleMedium,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            val name = "@${uiState.detail.name.lowercase()}"
+            Text(
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
+                text = name,
+                textDecoration = TextDecoration.Underline,
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            Favorite(
+                onFavorite = { onFavorite(uiState.detail.id) },
+                isFavorite = uiState.detail.isFavorite,
+            )
+        }
     }
 
     item {
@@ -134,7 +154,13 @@ fun PreviewRoadmapScreen() {
         Surface(color = MaterialTheme.colorScheme.background) {
             val uiState = RoadmapDetailUiState.Failure("An unexpected error occurred")
 
-            RoadmapScreen(uiState = uiState, onBack = { }, onFolder = { }, onItem = { })
+            RoadmapScreen(
+                uiState = uiState,
+                onBack = { },
+                onFavorite = { },
+                onFolder = { },
+                onItem = { },
+            )
         }
     }
 }

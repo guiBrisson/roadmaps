@@ -22,8 +22,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.github.guibrisson.roadmaps.R
+import com.github.guibrisson.roadmaps.ui.components.OnLifecycleEvent
 import com.github.guibrisson.roadmaps.ui.components.alignLastItemToBottom
 import com.github.guibrisson.roadmaps.ui.components.failure
 import com.github.guibrisson.roadmaps.ui.components.loading
@@ -37,6 +39,16 @@ fun HomeRoute(
     onRoadmap: (roadmapId: String) -> Unit,
 ) {
     val uiState by viewModel.roadmapUiState.collectAsStateWithLifecycle()
+
+    OnLifecycleEvent { _, event ->
+        when (event) {
+            Lifecycle.Event.ON_RESUME -> {
+                //Todo: update the tracked roadmaps list
+            }
+
+            else -> Unit
+        }
+    }
 
     HomeScreen(
         modifier = modifier,
