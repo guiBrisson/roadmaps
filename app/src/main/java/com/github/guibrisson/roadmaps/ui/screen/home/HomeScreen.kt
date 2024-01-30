@@ -42,10 +42,7 @@ fun HomeRoute(
 
     OnLifecycleEvent { _, event ->
         when (event) {
-            Lifecycle.Event.ON_RESUME -> {
-                //Todo: update the tracked roadmaps list
-            }
-
+            Lifecycle.Event.ON_RESUME -> viewModel.updateTrackedRoadmaps()
             else -> Unit
         }
     }

@@ -32,7 +32,6 @@ class HomeViewModel @Inject constructor(
                 TrackedRoadmap(roadmap.id, roadmap.name, roadmap.description, isFavorite)
             }
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val _roadmapsUiState = MutableStateFlow<RoadmapsUiState>(RoadmapsUiState.Loading)
     val roadmapUiState: StateFlow<RoadmapsUiState> =
@@ -47,6 +46,10 @@ class HomeViewModel @Inject constructor(
             }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), _roadmapsUiState.value)
 
+
+    fun updateTrackedRoadmaps() {
+        trackerRepository.updateRoadmapsTracker()
+    }
 
     fun favorite(roadmapId: String) {
         viewModelScope.launch(Dispatchers.IO) {

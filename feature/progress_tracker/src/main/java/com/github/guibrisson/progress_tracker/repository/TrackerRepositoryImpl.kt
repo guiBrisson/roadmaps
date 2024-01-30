@@ -19,6 +19,8 @@ class TrackerRepositoryImpl @Inject constructor(
 
     override fun roadmapsTracker(): StateFlow<List<RoadmapTracker>> = _trackersFlow.asStateFlow()
 
+    override fun updateRoadmapsTracker() = transaction { }
+
     override suspend fun getRoadmapTracker(roadmapId: String): RoadmapTracker? {
         return transaction {
             val roadmaps = tracker.readFile()
