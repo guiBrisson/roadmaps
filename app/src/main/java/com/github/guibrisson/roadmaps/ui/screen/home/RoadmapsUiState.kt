@@ -1,12 +1,13 @@
 package com.github.guibrisson.roadmaps.ui.screen.home
 
-import com.github.guibrisson.model.Roadmap
+import com.github.guibrisson.model.TrackedRoadmap
 
 sealed interface RoadmapsUiState {
     data object Loading : RoadmapsUiState
 
     data class Success(
-        val roadmaps: List<Roadmap>
+        val savedRoadmaps: List<TrackedRoadmap>,
+        val roadmaps: List<TrackedRoadmap>
     ) : RoadmapsUiState
 
     data class Failure(
