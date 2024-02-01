@@ -8,5 +8,4 @@ data class RoadmapTracker(
     @SerialName("roadmap_id") val roadmapId: String,
     var progress: List<String>,
     @SerialName("is_favorite") var isFavorite: Boolean,
-    @SerialName("topics_amount") var topicsAmount: Int,
 )

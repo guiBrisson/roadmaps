@@ -7,13 +7,15 @@ import com.github.guibrisson.model.RoadmapDetail
 import com.github.guibrisson.model.TopicFolder
 import com.github.guibrisson.model.TopicItem
 import com.github.guibrisson.model.TopicSystem
+import com.github.guibrisson.progress_tracker.repository.TrackerRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class RoadmapRepositoryImpl @Inject constructor(
     @ApplicationContext context: Context,
+    trackerRepository: TrackerRepository,
 ) : RoadmapRepository {
-    private val service = RoadmapService(context)
+    private val service = RoadmapService(context, trackerRepository)
 
     override fun listAllRoadmaps(): List<Roadmap> {
         return service.getAllRoadmaps()

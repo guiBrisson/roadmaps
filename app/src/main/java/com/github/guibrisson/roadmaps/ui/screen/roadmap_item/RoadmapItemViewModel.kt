@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.guibrisson.data.repository.RoadmapRepository
+import com.github.guibrisson.progress_tracker.repository.TrackerRepository
 import com.github.guibrisson.roadmaps.navigation.NavigationUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class RoadmapItemViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val roadmapRepository: RoadmapRepository,
+    private val trackerRepository: TrackerRepository,
 ) : ViewModel() {
     private val navArgs: String =
         checkNotNull(savedStateHandle[NavigationUtils.ROADMAP_TOPIC_ARGS])
@@ -38,5 +40,10 @@ class RoadmapItemViewModel @Inject constructor(
             val errorMessage = "Could not find topic '$itemId' from '$roadmapId'"
             _uiState.update { ItemUiState.Failure(errorMessage) }
         }
+    }
+
+    fun markAsDone() {
+        trackerRepository.markItemAsDone(roadmapId, itemId)
+        fetchItem()
     }
 }

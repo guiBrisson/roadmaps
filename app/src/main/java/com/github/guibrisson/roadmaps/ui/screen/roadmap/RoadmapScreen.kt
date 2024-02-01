@@ -129,7 +129,7 @@ private fun LazyListScope.roadmapDetailSuccess(
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                val progress = uiState.detail.content.progress.size
+                val progress = uiState.detail.content.progressAmount
                 val amount = uiState.detail.content.topicsAmount
                 Text(
                     text = "[${progress}/${amount}]",

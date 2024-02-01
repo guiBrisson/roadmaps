@@ -43,7 +43,12 @@ fun RoadmapItemRoute(
         viewModel.fetchItem()
     }
 
-    RoadmapItemScreen(modifier = modifier, uiState = uiState, onBack = onBack)
+    RoadmapItemScreen(
+        modifier = modifier,
+        uiState = uiState,
+        onBack = onBack,
+        onMarkDone = viewModel::markAsDone,
+    )
 }
 
 @Composable
@@ -51,6 +56,7 @@ internal fun RoadmapItemScreen(
     modifier: Modifier = Modifier,
     uiState: ItemUiState,
     onBack: () -> Unit,
+    onMarkDone: () -> Unit,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -86,7 +92,7 @@ internal fun RoadmapItemScreen(
 
         when (uiState) {
             is ItemUiState.Success -> {
-                topicContent(uiState.item)
+                topicContent(uiState.item, onMarkDone  = onMarkDone)
 
                 item { Spacer(modifier = Modifier.padding(1.dp)) }
             }
@@ -106,7 +112,7 @@ private fun PreviewRoadmapItemScreen() {
     RoadmapsTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             val uiState = ItemUiState.Loading
-            RoadmapItemScreen(uiState = uiState, onBack = { })
+            RoadmapItemScreen(uiState = uiState, onBack = { }, onMarkDone = { })
         }
     }
 }

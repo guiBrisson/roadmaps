@@ -32,7 +32,6 @@ class ProgressTrackerManager(private val context: Context) {
             if (t.roadmapId == tracker.roadmapId) {
                 t.progress = tracker.progress
                 t.isFavorite = tracker.isFavorite
-                t.topicsAmount = tracker.topicsAmount
                 found = true
                 break
             }

@@ -49,7 +49,10 @@ import com.halilibo.richtext.ui.material3.RichText
 import com.halilibo.richtext.ui.resolveDefaults
 import com.halilibo.richtext.ui.string.RichTextStringStyle
 
-fun LazyListScope.topicContent(topic: TopicSystem) {
+fun LazyListScope.topicContent(
+    topic: TopicSystem,
+    onMarkDone: (() -> Unit)? = null,
+) {
     item {
         Text(
             modifier = Modifier.padding(horizontal = 20.dp),
@@ -95,6 +98,17 @@ fun LazyListScope.topicContent(topic: TopicSystem) {
             }
         }
     }
+
+    if (topic is TopicItem) {
+        item {
+            MarkDone(
+                modifier = Modifier.padding(start = 20.dp, top = 28.dp),
+                isDone = topic.isDone,
+                onMarkDone = { onMarkDone?.let { it() } },
+            )
+        }
+    }
+
 }
 
 fun LazyListScope.topics(
@@ -155,7 +169,7 @@ fun LazyListScope.topics(
             )
 
             if (topic is TopicFolder) {
-                val progress = topic.progress.size
+                val progress = topic.progressAmount
                 val amount = topic.topicsAmount
                 Text(
                     modifier = Modifier,
@@ -173,9 +187,14 @@ fun LazyListScope.topics(
 fun PreviewTopicContent() {
     RoadmapsTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            val topic = TopicItem(id = "1", name = "topic", content = contentMarkdownExample)
+            val topic = TopicItem(
+                id = "1",
+                name = "topic",
+                content = contentMarkdownExample,
+                isDone = false,
+            )
             LazyColumn {
-                topicContent(topic)
+                topicContent(topic, onMarkDone = { })
             }
         }
     }
@@ -194,11 +213,13 @@ fun PreviewTopics() {
                     content = "",
                     topics = emptyList(),
                     topicsAmount = 1,
+                    progressAmount = 1,
                 ),
                 TopicItem(
                     id = "2",
                     name = "Item",
                     content = "",
+                    isDone = true,
                 )
             )
 

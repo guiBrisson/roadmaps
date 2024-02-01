@@ -17,7 +17,7 @@ class TrackerRepositoryImpl @Inject constructor(context: Context) : TrackerRepos
 
     override fun updateRoadmapsTracker() = transaction { }
 
-    override suspend fun getRoadmapTracker(roadmapId: String): RoadmapTracker? {
+    override fun getRoadmapTracker(roadmapId: String): RoadmapTracker? {
         return transaction {
             val roadmaps = tracker.readFile()
             return@transaction roadmaps.firstOrNull { it.roadmapId == roadmapId }
@@ -42,7 +42,26 @@ class TrackerRepositoryImpl @Inject constructor(context: Context) : TrackerRepos
                 roadmapId = roadmapId,
                 progress = emptyList(),
                 isFavorite = true,
-                topicsAmount =  0,
+            )
+            tracker.writeOnFile(roadmapTracker)
+        }
+    }
+
+    override fun markItemAsDone(roadmapId: String, itemId: String) {
+        return transaction {
+            val trackers = tracker.readFile()
+            trackers.firstOrNull { it.roadmapId == roadmapId }?.let { roadmapTracker ->
+                val progress = roadmapTracker.progress.toMutableList()
+                progress.add(itemId)
+                val updatedRoadmap = roadmapTracker.copy(progress = progress)
+                tracker.writeOnFile(updatedRoadmap)
+                return@transaction
+            }
+
+            val roadmapTracker = RoadmapTracker(
+                roadmapId = roadmapId,
+                progress = listOf(itemId),
+                isFavorite = false,
             )
             tracker.writeOnFile(roadmapTracker)
         }

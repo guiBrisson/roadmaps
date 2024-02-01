@@ -26,6 +26,7 @@ android {
 
 dependencies {
     implementation(project(":core:model"))
+    implementation(project(":feature:progress_tracker"))
 
     implementation(libs.core.ktx)
 
