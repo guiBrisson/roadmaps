@@ -15,6 +15,7 @@ import java.util.UUID
 class ProgressTrackerManager(private val context: Context) {
     private val fileDir = context.filesDir
     private val file = File(fileDir, FILE_NAME)
+    private val json = Json { ignoreUnknownKeys = true }
 
     init {
         createFile()
@@ -31,6 +32,7 @@ class ProgressTrackerManager(private val context: Context) {
             if (t.roadmapId == tracker.roadmapId) {
                 t.progress = tracker.progress
                 t.isFavorite = tracker.isFavorite
+                t.topicsAmount = tracker.topicsAmount
                 found = true
                 break
             }
@@ -40,7 +42,7 @@ class ProgressTrackerManager(private val context: Context) {
             trackerList.add(tracker)
         }
 
-        val json = Json.encodeToJsonElement(trackerList)
+        val json = json.encodeToJsonElement(trackerList)
         file.writeText(json.toString())
     }
 
@@ -52,7 +54,7 @@ class ProgressTrackerManager(private val context: Context) {
             for (line in lines) fileAsText += line
         }
 
-        return Json.decodeFromString<List<RoadmapTracker>>(fileAsText)
+        return json.decodeFromString<List<RoadmapTracker>>(fileAsText)
     }
 
     private fun createFile() {

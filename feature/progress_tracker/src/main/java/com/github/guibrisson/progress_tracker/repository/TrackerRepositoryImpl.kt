@@ -38,14 +38,19 @@ class TrackerRepositoryImpl @Inject constructor(context: Context) : TrackerRepos
                 return@transaction
             }
 
-            val roadmapTracker = RoadmapTracker(roadmapId, emptyList(), isFavorite = true)
+            val roadmapTracker = RoadmapTracker(
+                roadmapId = roadmapId,
+                progress = emptyList(),
+                isFavorite = true,
+                topicsAmount =  0,
+            )
             tracker.writeOnFile(roadmapTracker)
         }
     }
 
     private fun trackers(): List<RoadmapTracker> = tracker.readFile()
 
-    private fun <T>transaction(function: () -> T): T {
+    private fun <T> transaction(function: () -> T): T {
         return function().also { _trackersFlow.update { trackers() } }
     }
 }

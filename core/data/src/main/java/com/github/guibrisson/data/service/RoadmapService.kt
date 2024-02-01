@@ -19,18 +19,20 @@ class RoadmapService(private val context: Context) {
     }
 
     fun getRoadmapDetails(roadmapId: String): RoadmapDetail? {
-        if (roadmaps?.firstOrNull { it ==  roadmapId } == null) {
+        if (roadmaps?.firstOrNull { it == roadmapId } == null) {
             return null
         }
 
         val roadmap = parseRoadmap(roadmapId)
         val topics = buildRoadmapAssetTree(context.assets, "roadmaps/$roadmapId/content")
+        val topicsAmount = calculateTopicsAmount(topics)
 
         return RoadmapDetail(
             id = roadmap.id,
             name = roadmap.name,
             description = roadmap.description,
             content = topics,
+            topicsAmount = topicsAmount,
         ).also { Log.d(TAG, "getRoadmapDetails: ${it.id}") }
     }
 
@@ -96,7 +98,25 @@ class RoadmapService(private val context: Context) {
             }
         }
 
-        return Roadmap(roadmapId, name, description)
+        return Roadmap(
+            id = roadmapId,
+            name = name,
+            description = description,
+            isFavorite = false,
+        )
+    }
+
+    private fun calculateTopicsAmount(topicFolder: TopicFolder): Int {
+        var totalAmount = 0
+
+        topicFolder.topics.forEach { topic ->
+            totalAmount += when(topic) {
+                is TopicFolder -> calculateTopicsAmount(topic)
+                is TopicItem -> 1
+            }
+        }
+
+        return totalAmount
     }
 
     private fun parseMdLine(line: String): String? {

@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -109,17 +110,32 @@ private fun LazyListScope.roadmapDetailSuccess(
 ) {
     item {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(start = 20.dp, bottom = 8.dp, end = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            val name = "@${uiState.detail.name.lowercase()}"
-            Text(
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 8.dp),
-                text = name,
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.titleMedium,
-            )
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                val name = "@${uiState.detail.name.lowercase()}"
+                Text(
+                    modifier = Modifier.weight(1f, false),
+                    text = name,
+                    textDecoration = TextDecoration.Underline,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+
+                val amountDonePerTotal = "${uiState.detail.progress.size}/${uiState.detail.topicsAmount}"
+                Text(
+                    text = "[$amountDonePerTotal]",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
+                )
+            }
 
             Favorite(
                 onFavorite = { onFavorite(uiState.detail.id) },
