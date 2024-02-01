@@ -1,7 +1,6 @@
 package com.github.guibrisson.progress_tracker.repository
 
 import android.content.Context
-import com.github.guibrisson.data.repository.RoadmapRepository
 import com.github.guibrisson.progress_tracker.ProgressTrackerManager
 import com.github.guibrisson.progress_tracker.model.RoadmapTracker
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,10 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-class TrackerRepositoryImpl @Inject constructor(
-    context: Context,
-    private val roadmapRepository: RoadmapRepository,
-) : TrackerRepository {
+class TrackerRepositoryImpl @Inject constructor(context: Context) : TrackerRepository {
     private val tracker = ProgressTrackerManager(context)
     private val _trackersFlow: MutableStateFlow<List<RoadmapTracker>> = MutableStateFlow(trackers())
 
@@ -42,11 +38,8 @@ class TrackerRepositoryImpl @Inject constructor(
                 return@transaction
             }
 
-            roadmapRepository.listAllRoadmaps().firstOrNull { it.id == roadmapId }?.let { roadmap ->
-                val roadmapTracker = RoadmapTracker(roadmap.id, emptyList(), isFavorite = true)
-                tracker.writeOnFile(roadmapTracker)
-                return@transaction
-            }
+            val roadmapTracker = RoadmapTracker(roadmapId, emptyList(), isFavorite = true)
+            tracker.writeOnFile(roadmapTracker)
         }
     }
 
