@@ -155,10 +155,11 @@ fun LazyListScope.topics(
             )
 
             if (topic is TopicFolder) {
-                val size = topic.topics.size
+                val progress = topic.progress.size
+                val amount = topic.topicsAmount
                 Text(
                     modifier = Modifier,
-                    text = "[$size]",
+                    text = "[${progress}/${amount}]",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
                 )
@@ -192,6 +193,7 @@ fun PreviewTopics() {
                     name = "FolderFolderFolderFolderFolderFolder",
                     content = "",
                     topics = emptyList(),
+                    topicsAmount = 1,
                 ),
                 TopicItem(
                     id = "2",

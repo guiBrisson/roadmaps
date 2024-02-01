@@ -12,6 +12,8 @@ data class TopicFolder(
     override val name: String,
     override val content: String,
     val topics: List<TopicSystem>,
+    val topicsAmount: Int,
+    var progress: List<String> = emptyList(),
 ) : TopicSystem(id, name, content)
 
 data class TopicItem(

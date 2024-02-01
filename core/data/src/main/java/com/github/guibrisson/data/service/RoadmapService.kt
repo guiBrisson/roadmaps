@@ -25,14 +25,12 @@ class RoadmapService(private val context: Context) {
 
         val roadmap = parseRoadmap(roadmapId)
         val topics = buildRoadmapAssetTree(context.assets, "roadmaps/$roadmapId/content")
-        val topicsAmount = calculateTopicsAmount(topics)
 
         return RoadmapDetail(
             id = roadmap.id,
             name = roadmap.name,
             description = roadmap.description,
             content = topics,
-            topicsAmount = topicsAmount,
         ).also { Log.d(TAG, "getRoadmapDetails: ${it.id}") }
     }
 
@@ -69,12 +67,16 @@ class RoadmapService(private val context: Context) {
         val indexItem = rootItems.last()
         rootItems.removeLast()
 
-        return TopicFolder(
+        val folder = TopicFolder(
             id = rootId,
             name = indexItem.name,
             content = indexItem.content,
             topics = rootItems,
+            topicsAmount = 0,
         )
+        val amount = calculateTopicsAmount(folder)
+
+        return folder.copy(topicsAmount = amount)
     }
 
     private fun parseRoadmap(roadmapId: String): Roadmap {

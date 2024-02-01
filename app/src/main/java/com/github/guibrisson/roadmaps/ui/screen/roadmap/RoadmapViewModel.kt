@@ -31,10 +31,8 @@ class RoadmapViewModel @Inject constructor(
                 roadmapRepository.getRoadmapDetails(roadmapId)?.let { details ->
                     val tracker = trackerRepository.getRoadmapTracker(roadmapId)
                     val isFavorite = tracker?.isFavorite ?: false
-                    val progress = tracker?.progress ?: emptyList()
 
                     details.isFavorite = isFavorite
-                    details.progress = progress
                     _uiState.update { RoadmapDetailUiState.Success(details) }
                     return@launch
                 }

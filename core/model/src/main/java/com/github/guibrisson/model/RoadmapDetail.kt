@@ -6,6 +6,4 @@ data class RoadmapDetail(
     val description: String,
     var isFavorite: Boolean = false,
     val content: TopicFolder,
-    val topicsAmount: Int,
-    var progress: List<String> = emptyList(),
 )
