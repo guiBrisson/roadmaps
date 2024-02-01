@@ -12,4 +12,7 @@
     <string name="roadmap_icon_content_description">Roadmap icon</string>
     <string name="favorite_roadmap_icon_content_description">Favorite roadmap icon</string>
     <string name="arrow_back_icon_content_description">Arrow back icon</string>
+    <string name="topic_check_icon_content_description">Topic completed icon</string>
+    <string name="topic_minus_icon_content_description">Topic not started icon</string>
+    <string name="topic_dot_icon_content_description">Topic in progress icon</string>
 </resources>
