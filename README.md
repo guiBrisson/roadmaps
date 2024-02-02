@@ -5,7 +5,7 @@
 Welcome to Roadmaps, a mobile adaptation of the popular website [roadmap.sh](http://roadmap.sh). 
 This mobile app is designed to provide users with a convenient way to explore and track their progress through various learning roadmaps. 
 
-<img src="https://github.com/guiBrisson/roadmaps/assets/54915600/e554d61d-cc0a-4fe2-b611-8244be1de6ef" alt="Descrição da imagem" height="500">
+<img src="https://github.com/guiBrisson/roadmaps/assets/54915600/63dbed2f-08e7-49e7-b923-df8532a58227" alt="App cover" height="500">
 
 ## Download
 
