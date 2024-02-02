@@ -1,7 +1,6 @@
 package com.github.guibrisson.progress_tracker.repository
 
 import android.content.Context
-import com.github.guibrisson.data.repository.RoadmapRepository
 import com.github.guibrisson.progress_tracker.ProgressTrackerManager
 import com.github.guibrisson.progress_tracker.model.RoadmapTracker
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,10 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-class TrackerRepositoryImpl @Inject constructor(
-    context: Context,
-    private val roadmapRepository: RoadmapRepository,
-) : TrackerRepository {
+class TrackerRepositoryImpl @Inject constructor(context: Context) : TrackerRepository {
     private val tracker = ProgressTrackerManager(context)
     private val _trackersFlow: MutableStateFlow<List<RoadmapTracker>> = MutableStateFlow(trackers())
 
@@ -21,7 +17,7 @@ class TrackerRepositoryImpl @Inject constructor(
 
     override fun updateRoadmapsTracker() = transaction { }
 
-    override suspend fun getRoadmapTracker(roadmapId: String): RoadmapTracker? {
+    override fun getRoadmapTracker(roadmapId: String): RoadmapTracker? {
         return transaction {
             val roadmaps = tracker.readFile()
             return@transaction roadmaps.firstOrNull { it.roadmapId == roadmapId }
@@ -42,17 +38,38 @@ class TrackerRepositoryImpl @Inject constructor(
                 return@transaction
             }
 
-            roadmapRepository.listAllRoadmaps().firstOrNull { it.id == roadmapId }?.let { roadmap ->
-                val roadmapTracker = RoadmapTracker(roadmap.id, emptyList(), isFavorite = true)
-                tracker.writeOnFile(roadmapTracker)
+            val roadmapTracker = RoadmapTracker(
+                roadmapId = roadmapId,
+                progress = emptyList(),
+                isFavorite = true,
+            )
+            tracker.writeOnFile(roadmapTracker)
+        }
+    }
+
+    override fun markItemAsDone(roadmapId: String, itemId: String) {
+        return transaction {
+            val trackers = tracker.readFile()
+            trackers.firstOrNull { it.roadmapId == roadmapId }?.let { roadmapTracker ->
+                val progress = roadmapTracker.progress.toMutableList()
+                progress.add(itemId)
+                val updatedRoadmap = roadmapTracker.copy(progress = progress)
+                tracker.writeOnFile(updatedRoadmap)
                 return@transaction
             }
+
+            val roadmapTracker = RoadmapTracker(
+                roadmapId = roadmapId,
+                progress = listOf(itemId),
+                isFavorite = false,
+            )
+            tracker.writeOnFile(roadmapTracker)
         }
     }
 
     private fun trackers(): List<RoadmapTracker> = tracker.readFile()
 
-    private fun <T>transaction(function: () -> T): T {
+    private fun <T> transaction(function: () -> T): T {
         return function().also { _trackersFlow.update { trackers() } }
     }
 }

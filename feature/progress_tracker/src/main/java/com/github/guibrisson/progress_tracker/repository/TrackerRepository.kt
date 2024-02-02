@@ -6,7 +6,8 @@ import kotlinx.coroutines.flow.StateFlow
 interface TrackerRepository {
     fun roadmapsTracker(): StateFlow<List<RoadmapTracker>>
     fun updateRoadmapsTracker()
-    suspend fun getRoadmapTracker(roadmapId: String): RoadmapTracker?
+    fun getRoadmapTracker(roadmapId: String): RoadmapTracker?
     suspend fun clearTracker()
     suspend fun toggleFavorite(roadmapId: String)
+    fun markItemAsDone(roadmapId: String, itemId: String)
 }

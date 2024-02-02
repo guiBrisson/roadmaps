@@ -19,7 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.github.guibrisson.model.TrackedRoadmap
+import com.github.guibrisson.model.Roadmap
 import com.github.guibrisson.roadmaps.ui.components.Favorite
 import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
 
@@ -27,7 +27,7 @@ import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
 @Composable
 fun RoadmapItem(
     modifier: Modifier = Modifier,
-    roadmap: TrackedRoadmap,
+    roadmap: Roadmap,
     shape: Shape = RoundedCornerShape(8.dp),
     onRoadmap: (roadmapId: String) -> Unit,
     onFavorite: (roadmapId: String) -> Unit,
@@ -69,7 +69,7 @@ fun RoadmapItem(
 private fun PreviewRoadmapItem() {
     RoadmapsTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            val roadmap = TrackedRoadmap(
+            val roadmap = Roadmap(
                 id = "android",
                 name = "Android",
                 description = "How to became an Android Developer in 2024",

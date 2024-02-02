@@ -1,7 +1,6 @@
 package com.github.guibrisson.progress_tracker.di
 
 import android.content.Context
-import com.github.guibrisson.data.repository.RoadmapRepository
 import com.github.guibrisson.progress_tracker.repository.TrackerRepository
 import com.github.guibrisson.progress_tracker.repository.TrackerRepositoryImpl
 import dagger.Module
@@ -17,6 +16,5 @@ object ProgressTrackerModule {
     @Provides
     fun providesTrackerRepository(
         @ApplicationContext context: Context,
-        roadmapRepository: RoadmapRepository,
-    ): TrackerRepository = TrackerRepositoryImpl(context, roadmapRepository)
+    ): TrackerRepository = TrackerRepositoryImpl(context)
 }

@@ -29,8 +29,8 @@ class RoadmapViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 roadmapRepository.getRoadmapDetails(roadmapId)?.let { details ->
-                    val isFavorite =
-                        trackerRepository.getRoadmapTracker(roadmapId)?.isFavorite ?: false
+                    val tracker = trackerRepository.getRoadmapTracker(roadmapId)
+                    val isFavorite = tracker?.isFavorite ?: false
 
                     details.isFavorite = isFavorite
                     _uiState.update { RoadmapDetailUiState.Success(details) }
