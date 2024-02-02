@@ -136,9 +136,9 @@ class RoadmapService(
         var progressAmount = 0
 
         topicFolder.topics.forEach { topic ->
-            when (topic) {
-                is TopicFolder -> calculateTopicsAmount(topic)
-                is TopicItem -> progressAmount += if (topic.isDone) 1 else 0
+            progressAmount += when (topic) {
+                is TopicFolder -> calculateProgressAmount(topic)
+                is TopicItem -> if (topic.isDone) 1 else 0
             }
         }
 
