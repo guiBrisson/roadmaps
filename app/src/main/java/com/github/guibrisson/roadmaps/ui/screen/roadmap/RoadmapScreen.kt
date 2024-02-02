@@ -1,6 +1,7 @@
 package com.github.guibrisson.roadmaps.ui.screen.roadmap
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +35,8 @@ import com.github.guibrisson.roadmaps.ui.components.failure
 import com.github.guibrisson.roadmaps.ui.components.loading
 import com.github.guibrisson.roadmaps.ui.components.topics
 import com.github.guibrisson.roadmaps.ui.theme.RoadmapsTheme
+import com.github.guibrisson.roadmaps.ui.theme.green
+import com.github.guibrisson.roadmaps.ui.theme.purple
 
 @Composable
 fun RoadmapRoute(
@@ -110,7 +113,9 @@ private fun LazyListScope.roadmapDetailSuccess(
 ) {
     item {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 20.dp, bottom = 8.dp, end = 20.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, bottom = 8.dp, end = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -130,9 +135,9 @@ private fun LazyListScope.roadmapDetailSuccess(
                 )
 
                 val progress = uiState.detail.content.progressAmount
-                val amount = uiState.detail.content.topicsAmount
+                val total = uiState.detail.content.topicsAmount
                 Text(
-                    text = "[${progress}/${amount}]",
+                    text = "[${progress}/${total}]",
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.3f),
                 )
@@ -147,11 +152,59 @@ private fun LazyListScope.roadmapDetailSuccess(
 
     item {
         Text(
-            modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 36.dp),
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp),
             text = uiState.detail.description,
             textDecoration = TextDecoration.Underline,
             color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
         )
+    }
+
+    item {
+        Column(
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 36.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            val progress = uiState.detail.content.progressAmount
+            val total = uiState.detail.content.topicsAmount
+            val percentage: Float = (100f * progress) / total
+
+
+            val textStyle = MaterialTheme.typography.bodyMedium
+            val textColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f)
+
+            Text(
+                text = stringResource(id = R.string.topics_percentage, percentage),
+                style = textStyle,
+                color = textColor,
+            )
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = progress.toString(), style = textStyle, color = green)
+
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(id = R.string.done),
+                    style = textStyle,
+                    color = textColor,
+                )
+
+                Text(
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    text = "•",
+                    style = textStyle,
+                    color = textColor,
+                )
+
+                Text(text = total.toString(), style = textStyle, color = purple)
+
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(id = R.string.total),
+                    style = textStyle,
+                    color = textColor,
+                )
+            }
+        }
     }
 
     topics(
